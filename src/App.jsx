@@ -513,8 +513,8 @@ function WhatsAppPage() {
           border: "none",
           display: "block",
           position: "relative",
-          left: -250,
-          width: "calc(100% + 250px)",
+          left: -220,
+          width: "calc(100% + 220px)",
           height: "100%",
         }}
         title="WhatsApp"
