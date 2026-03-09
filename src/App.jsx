@@ -499,19 +499,21 @@ function WhatsAppPage() {
   return (
     <div style={{
       position: "fixed",
-      top: "64px",
-      left: "96px",
+      top: 64,
+      left: 96,
       right: 0,
       bottom: 0,
       overflow: "hidden",
+      zIndex: 30,
+      background: "#0a0a0a",
     }}>
       <iframe
         src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
         style={{
           border: "none",
-          position: "absolute",
-          top: 0,
-          left: "-250px",
+          display: "block",
+          position: "relative",
+          left: -250,
           width: "calc(100% + 250px)",
           height: "100%",
         }}
