@@ -501,8 +501,8 @@ function WhatsAppPage() {
       <div style={{
           position: "absolute",
           top: 0,
-          left: "-270px",
-          width: "calc(100% + 270px)",
+          left: "-300px",
+          width: "calc(100% + 300px)",
           height: "100%",
       }}>
         <iframe
