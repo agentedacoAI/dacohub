@@ -514,7 +514,7 @@ function WhatsAppPage() {
           color: "rgba(255,255,255,0.4)",
           marginTop: "4px",
         }}>
-          Conversas em tempo real via Chatwoot
+          Conversas em tempo real
         </p>
       </div>
       <div
@@ -522,14 +522,26 @@ function WhatsAppPage() {
         style={{
           height: "calc(100vh - 180px)",
           border: "1px solid rgba(255,76,59,0.1)",
+          position: "relative",
         }}
       >
-        <iframe
-          src="https://chat.agentedaco.com.br"
-          className="w-full h-full"
-          style={{ border: "none" }}
-          title="Chatwoot WhatsApp"
-        />
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: "-220px",
+          width: "calc(100% + 220px)",
+          height: "100%",
+        }}>
+          <iframe
+            src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
+            style={{
+              border: "none",
+              width: "100%",
+              height: "100%",
+            }}
+            title="WhatsApp"
+          />
+        </div>
       </div>
     </div>
   );
