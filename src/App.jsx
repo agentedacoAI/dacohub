@@ -525,7 +525,7 @@ function WhatsAppPage() {
         }}
       >
         <iframe
-          src="/chatwoot/"
+          src="https://chat.agentedaco.com.br"
           className="w-full h-full"
           style={{ border: "none" }}
           title="Chatwoot WhatsApp"
