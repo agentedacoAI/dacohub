@@ -497,24 +497,20 @@ function DashboardPage() {
 // ============== WHATSAPP PAGE ==============
 function WhatsAppPage() {
   return (
-    <div style={{ height: "calc(100vh - 64px)", overflow: "hidden", position: "relative" }}>
-      <div style={{
-          position: "absolute",
-          top: 0,
-          left: "-300px",
+    <div style={{
+      height: "calc(100vh - 64px)",
+      overflow: "hidden",
+    }}>
+      <iframe
+        src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
+        style={{
+          border: "none",
           width: "calc(100% + 300px)",
           height: "100%",
-      }}>
-        <iframe
-          src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
-          style={{
-            border: "none",
-            width: "100%",
-            height: "100%",
-          }}
-          title="WhatsApp"
-        />
-      </div>
+          marginLeft: "-300px",
+        }}
+        title="WhatsApp"
+      />
     </div>
   );
 }
