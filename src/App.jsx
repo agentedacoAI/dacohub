@@ -518,10 +518,9 @@ function WhatsAppPage() {
         </p>
       </div>
       <div
-        className="rounded-2xl overflow-hidden"
+        className="overflow-hidden"
         style={{
-          height: "calc(100vh - 180px)",
-          border: "1px solid rgba(255,76,59,0.1)",
+          height: "calc(100vh - 140px)",
           position: "relative",
         }}
       >
