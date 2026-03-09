@@ -527,8 +527,8 @@ function WhatsAppPage() {
         <div style={{
           position: "absolute",
           top: 0,
-          left: "-220px",
-          width: "calc(100% + 220px)",
+          left: "-56px",
+          width: "calc(100% + 56px)",
           height: "100%",
         }}>
           <iframe
