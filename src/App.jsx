@@ -1,4 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const CW_TOKEN = "UGFDGBFjc9rS9MSNbQAejwkP";
+const CW_API = "/cwapi/api/v1/accounts/1";
+
+async function cwFetch(path) {
+  try {
+    const res = await fetch(`${CW_API}${path}`, {
+      headers: { api_access_token: CW_TOKEN },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
 
 // ============== ICONS ==============
 const Icons = {
@@ -106,6 +119,17 @@ const Icons = {
       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  arrowUp: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+      <path d="M18 15l-6-6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  refresh: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+      <path d="M1 4v6h6M23 20v-6h-6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
 };
 
 // ============== SIDEBAR ==============
@@ -129,7 +153,6 @@ function Sidebar({ currentPage, onNavigate }) {
         background: "linear-gradient(180deg, rgba(15,15,15,0.98) 0%, rgba(10,10,10,0.99) 100%)",
         borderRight: "1px solid rgba(255,60,60,0.15)",
       }}>
-      {/* Logo */}
       <div className="mb-8 text-center">
         <div style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: "16px", color: "#fff", lineHeight: 1, letterSpacing: "2px" }}>
           DACO
@@ -138,8 +161,6 @@ function Sidebar({ currentPage, onNavigate }) {
           HUB<span style={{ color: "#FF4C3B" }}>.</span>
         </div>
       </div>
-
-      {/* Nav Items */}
       <div className="flex flex-col items-center gap-1 flex-1 overflow-y-auto w-full px-2"
         style={{ scrollbarWidth: "none" }}>
         {sidebarItems.map((item) => (
@@ -156,26 +177,16 @@ function Sidebar({ currentPage, onNavigate }) {
                 : "1px solid transparent",
             }}
           >
-            <div
-              className="transition-all duration-300"
-              style={{
-                color: currentPage === item.id ? "#FF4C3B" : "rgba(255,255,255,0.5)",
-              }}
-            >
+            <div className="transition-all duration-300"
+              style={{ color: currentPage === item.id ? "#FF4C3B" : "rgba(255,255,255,0.5)" }}>
               {item.icon}
             </div>
-            <span
-              className="transition-all duration-300"
+            <span className="transition-all duration-300"
               style={{
-                fontSize: "8px",
-                fontFamily: "'Oswald', sans-serif",
-                fontWeight: 500,
-                letterSpacing: "1px",
+                fontSize: "8px", fontFamily: "'Oswald', sans-serif", fontWeight: 500,
+                letterSpacing: "1px", textAlign: "center", lineHeight: 1.2,
                 color: currentPage === item.id ? "#FF4C3B" : "rgba(255,255,255,0.4)",
-                textAlign: "center",
-                lineHeight: 1.2,
-              }}
-            >
+              }}>
               {item.label}
             </span>
           </button>
@@ -192,304 +203,379 @@ function LoginPage({ onLogin }) {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onLogin();
-    }, 1500);
+    setTimeout(() => { setLoading(false); onLogin(); }, 1500);
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden"
       style={{ background: "#0a0a0a" }}>
-      {/* Background */}
       <div className="absolute inset-0"
-        style={{
-          background: "radial-gradient(ellipse at 70% 50%, rgba(255,76,59,0.08) 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, rgba(255,76,59,0.05) 0%, transparent 50%)",
-        }}
-      />
-
-      {/* Circles decoration */}
+        style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(255,76,59,0.08) 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, rgba(255,76,59,0.05) 0%, transparent 50%)" }} />
       <div className="absolute" style={{ right: "10%", top: "15%" }}>
         {[280, 220, 160].map((size, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: size,
-              height: size,
-              border: "1px solid rgba(255,76,59,0.15)",
-              top: `${i * 30}px`,
-              left: `${i * 25}px`,
-              animation: `pulse ${3 + i}s ease-in-out infinite`,
-            }}
-          />
+          <div key={i} className="absolute rounded-full"
+            style={{ width: size, height: size, border: "1px solid rgba(255,76,59,0.15)", top: `${i * 30}px`, left: `${i * 25}px`, animation: `pulse ${3 + i}s ease-in-out infinite` }} />
         ))}
-        {/* Logo D. */}
-        <div
-          className="absolute flex items-center justify-center"
-          style={{
-            width: 120,
-            height: 120,
-            top: "80px",
-            left: "80px",
-            background: "#1a1a1a",
-            borderRadius: "24px",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-          }}
-        >
+        <div className="absolute flex items-center justify-center"
+          style={{ width: 120, height: 120, top: "80px", left: "80px", background: "#1a1a1a", borderRadius: "24px", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
           <span style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: "48px", color: "#fff" }}>
             D<span style={{ color: "#FF4C3B" }}>.</span>
           </span>
         </div>
       </div>
-
-      {/* Login Card */}
-      <div
-        className="relative z-10 w-full max-w-md p-10 rounded-3xl"
-        style={{
-          background: "rgba(20,20,20,0.8)",
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(255,255,255,0.05)",
-          boxShadow: "0 30px 80px rgba(0,0,0,0.5)",
-        }}
-      >
-        {/* Header */}
+      <div className="relative z-10 w-full max-w-md p-10 rounded-3xl"
+        style={{ background: "rgba(20,20,20,0.8)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.05)", boxShadow: "0 30px 80px rgba(0,0,0,0.5)" }}>
         <div className="mb-8">
-          <p style={{
-            fontFamily: "'Oswald', sans-serif",
-            fontSize: "13px",
-            fontWeight: 400,
-            letterSpacing: "3px",
-            color: "rgba(255,255,255,0.5)",
-            marginBottom: "8px",
-          }}>
+          <p style={{ fontFamily: "'Oswald', sans-serif", fontSize: "13px", fontWeight: 400, letterSpacing: "3px", color: "rgba(255,255,255,0.5)", marginBottom: "8px" }}>
             BEM VINDO À OUTRO <span style={{ color: "#FF4C3B" }}>NÍVEL</span>
           </p>
-          <h1 style={{
-            fontFamily: "'Oswald', sans-serif",
-            fontWeight: 700,
-            fontSize: "52px",
-            color: "#fff",
-            lineHeight: 1,
-            letterSpacing: "2px",
-          }}>
+          <h1 style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: "52px", color: "#fff", lineHeight: 1, letterSpacing: "2px" }}>
             DACO<br />HUB<span style={{ color: "#FF4C3B" }}>.</span>
           </h1>
         </div>
-
-        {/* Form */}
         <div className="flex flex-col gap-5">
           <div>
-            <label style={{
-              fontFamily: "'Oswald', sans-serif",
-              fontSize: "11px",
-              fontWeight: 500,
-              letterSpacing: "2px",
-              color: "rgba(255,255,255,0.5)",
-              marginBottom: "6px",
-              display: "block",
-            }}>
-              E-MAIL
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+            <label style={{ fontFamily: "'Oswald', sans-serif", fontSize: "11px", fontWeight: 500, letterSpacing: "2px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block" }}>E-MAIL</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               className="w-full px-5 py-4 rounded-xl outline-none transition-all duration-300"
-              style={{
-                background: "rgba(255,255,255,0.95)",
-                border: "2px solid transparent",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "15px",
-                color: "#1a1a1a",
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#FF4C3B"}
-              onBlur={(e) => e.target.style.borderColor = "transparent"}
-              placeholder="seu@email.com"
-            />
+              style={{ background: "rgba(255,255,255,0.95)", border: "2px solid transparent", fontFamily: "'DM Sans', sans-serif", fontSize: "15px", color: "#1a1a1a" }}
+              onFocus={(e) => e.target.style.borderColor = "#FF4C3B"} onBlur={(e) => e.target.style.borderColor = "transparent"}
+              placeholder="seu@email.com" />
           </div>
-
           <div>
-            <label style={{
-              fontFamily: "'Oswald', sans-serif",
-              fontSize: "11px",
-              fontWeight: 500,
-              letterSpacing: "2px",
-              color: "rgba(255,255,255,0.5)",
-              marginBottom: "6px",
-              display: "block",
-            }}>
-              SENHA
-            </label>
+            <label style={{ fontFamily: "'Oswald', sans-serif", fontSize: "11px", fontWeight: 500, letterSpacing: "2px", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block" }}>SENHA</label>
             <div className="relative">
-              <input
-                type={showPw ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+              <input type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-5 py-4 rounded-xl outline-none transition-all duration-300 pr-12"
-                style={{
-                  background: "rgba(255,255,255,0.95)",
-                  border: "2px solid transparent",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "15px",
-                  color: "#1a1a1a",
-                }}
-                onFocus={(e) => e.target.style.borderColor = "#FF4C3B"}
-                onBlur={(e) => e.target.style.borderColor = "transparent"}
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw(!showPw)}
-                className="absolute right-4 top-1/2 -translate-y-1/2"
-                style={{ color: "#999" }}
-              >
+                style={{ background: "rgba(255,255,255,0.95)", border: "2px solid transparent", fontFamily: "'DM Sans', sans-serif", fontSize: "15px", color: "#1a1a1a" }}
+                onFocus={(e) => e.target.style.borderColor = "#FF4C3B"} onBlur={(e) => e.target.style.borderColor = "transparent"}
+                placeholder="••••••••" />
+              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2" style={{ color: "#999" }}>
                 {showPw ? Icons.eyeOff : Icons.eye}
               </button>
             </div>
           </div>
-
-          <button
-            onClick={handleSubmit}
-            className="w-full py-4 rounded-xl font-bold transition-all duration-300 mt-2"
-            style={{
-              background: loading
-                ? "rgba(255,76,59,0.5)"
-                : "linear-gradient(135deg, #FF4C3B, #FF6B5A)",
-              color: "#fff",
-              fontFamily: "'Oswald', sans-serif",
-              fontSize: "16px",
-              letterSpacing: "3px",
-              border: "none",
-              cursor: loading ? "wait" : "pointer",
-              boxShadow: "0 10px 30px rgba(255,76,59,0.3)",
-              transform: loading ? "scale(0.98)" : "scale(1)",
-            }}
-            disabled={loading}
-          >
+          <button onClick={handleSubmit} className="w-full py-4 rounded-xl font-bold transition-all duration-300 mt-2"
+            style={{ background: loading ? "rgba(255,76,59,0.5)" : "linear-gradient(135deg, #FF4C3B, #FF6B5A)", color: "#fff", fontFamily: "'Oswald', sans-serif", fontSize: "16px", letterSpacing: "3px", border: "none", cursor: loading ? "wait" : "pointer", boxShadow: "0 10px 30px rgba(255,76,59,0.3)", transform: loading ? "scale(0.98)" : "scale(1)" }}
+            disabled={loading}>
             {loading ? "ENTRANDO..." : "ENTRAR"}
           </button>
-
-          <p className="text-center mt-2" style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "13px",
-            color: "rgba(255,255,255,0.3)",
-          }}>
+          <p className="text-center mt-2" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.3)" }}>
             Esqueceu a senha? <span style={{ color: "#FF4C3B", cursor: "pointer" }}>Recuperar</span>
           </p>
         </div>
       </div>
-
     </div>
   );
 }
 
-// ============== METRIC CARD ==============
-function MetricCard({ icon, title, whatsapp, instagram, delay }) {
+// ============== STAT CARD ==============
+function StatCard({ label, value, sub, color, icon, delay }) {
   return (
-    <div
-      className="rounded-2xl p-6 flex items-center gap-6 transition-all duration-500"
+    <div className="rounded-2xl p-5 flex flex-col gap-2"
       style={{
-        background: "linear-gradient(135deg, rgba(30,30,30,0.8), rgba(20,20,20,0.6))",
-        backdropFilter: "blur(10px)",
-        border: "1px solid rgba(255,76,59,0.1)",
-        animation: `slideUp 0.6s ease-out ${delay}ms both`,
-      }}
-    >
-      <div className="flex-shrink-0" style={{ color: "rgba(255,255,255,0.8)" }}>
-        {icon}
+        background: "linear-gradient(135deg, rgba(30,30,30,0.9), rgba(20,20,20,0.7))",
+        border: `1px solid ${color}22`,
+        animation: `slideUp 0.5s ease-out ${delay || 0}ms both`,
+      }}>
+      <div className="flex items-center justify-between">
+        <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "11px", fontWeight: 500, letterSpacing: "2px", color: "rgba(255,255,255,0.4)" }}>{label}</span>
+        <div style={{ color: color, opacity: 0.6 }}>{icon}</div>
       </div>
-      <div className="flex-1">
-        <h3 style={{
-          fontFamily: "'Oswald', sans-serif",
-          fontSize: "16px",
-          fontWeight: 600,
-          letterSpacing: "2px",
-          color: "#FF4C3B",
-          marginBottom: "8px",
-        }}>
-          {title}
-        </h3>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ background: "#25D366" }} />
-            <span style={{
-              fontFamily: "'Oswald', sans-serif",
-              fontSize: "18px",
-              fontWeight: 500,
-              color: "#fff",
-            }}>
-              {whatsapp} <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", letterSpacing: "1px" }}>WHATSAPP</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ background: "#E1306C" }} />
-            <span style={{
-              fontFamily: "'Oswald', sans-serif",
-              fontSize: "18px",
-              fontWeight: 500,
-              color: "#fff",
-            }}>
-              {instagram} <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", letterSpacing: "1px" }}>INSTAGRAM</span>
-            </span>
-          </div>
+      <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "36px", fontWeight: 700, color: "#fff", lineHeight: 1 }}>{value}</span>
+      {sub && <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>{sub}</span>}
+    </div>
+  );
+}
+
+// ============== BAR (simple) ==============
+function SimpleBar({ label, value, max, color }) {
+  const pct = max > 0 ? (value / max) * 100 : 0;
+  return (
+    <div className="flex items-center gap-3">
+      <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.5)", width: 120, letterSpacing: "1px" }}>{label}</span>
+      <div className="flex-1 h-6 rounded-lg overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+        <div className="h-full rounded-lg flex items-center justify-end pr-2 transition-all duration-700"
+          style={{ width: `${Math.max(pct, 2)}%`, background: `linear-gradient(90deg, ${color}66, ${color})` }}>
+          <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "11px", color: "#fff", fontWeight: 600 }}>{value}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// ============== DASHBOARD PAGE ==============
+// ============== DASHBOARD IA PAGE ==============
+function DashboardIAPage() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState(7);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const now = Math.floor(Date.now() / 1000);
+    const since = now - (period * 86400);
+
+    const [convos, contacts, reportData] = await Promise.all([
+      cwFetch(`/conversations?page=1&status=all`),
+      cwFetch(`/contacts?page=1&include_count=true`),
+      cwFetch(`/reports?metric=account&type=account&since=${since}&until=${now}`),
+    ]);
+
+    let allConvos = [];
+    if (convos && convos.data && convos.data.payload) {
+      allConvos = convos.data.payload;
+    } else if (convos && convos.payload) {
+      allConvos = convos.payload;
+    } else if (Array.isArray(convos)) {
+      allConvos = convos;
+    }
+
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - period);
+    const recentConvos = allConvos.filter(c => new Date(c.created_at) >= cutoff);
+
+    let totalContacts = 0;
+    if (contacts && contacts.payload) {
+      totalContacts = contacts.payload.length || 0;
+    }
+
+    let totalMsgsIn = 0;
+    let totalMsgsOut = 0;
+    let totalResolved = 0;
+    let totalOpen = 0;
+    let totalPending = 0;
+    let botHandled = 0;
+    let humanHandled = 0;
+
+    recentConvos.forEach(c => {
+      totalMsgsIn += c.messages_count || 0;
+      if (c.status === "resolved") totalResolved++;
+      else if (c.status === "open") totalOpen++;
+      else if (c.status === "pending") totalPending++;
+    });
+
+    allConvos.forEach(c => {
+      if (c.status === "resolved" && !c.assignee) botHandled++;
+      if (c.assignee) humanHandled++;
+    });
+
+    const totalConvos = recentConvos.length;
+    const convosAll = allConvos.length;
+
+    setData({
+      totalConvos,
+      totalContacts,
+      totalMsgsIn,
+      totalMsgsOut,
+      totalResolved,
+      totalOpen,
+      totalPending,
+      botHandled,
+      humanHandled,
+      convosAll,
+      transferRate: convosAll > 0 ? Math.round((humanHandled / convosAll) * 100) : 0,
+      recentConvos,
+    });
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchData(); }, [period]);
+
+  const PeriodBtn = ({ d, label }) => (
+    <button onClick={() => setPeriod(d)}
+      style={{
+        fontFamily: "'Oswald', sans-serif", fontSize: "12px", letterSpacing: "1px", padding: "6px 16px",
+        borderRadius: "8px", border: "none", cursor: "pointer",
+        background: period === d ? "#FF4C3B" : "rgba(255,255,255,0.05)",
+        color: period === d ? "#fff" : "rgba(255,255,255,0.4)",
+      }}>
+      {label}
+    </button>
+  );
+
+  return (
+    <div className="p-8" style={{ maxWidth: 1200 }}>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "32px", fontWeight: 700, color: "#fff", letterSpacing: "2px" }}>
+            DASHBOARD IA
+          </h1>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>
+            Monitoramento em tempo real dos agentes
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <PeriodBtn d={1} label="HOJE" />
+          <PeriodBtn d={7} label="7 DIAS" />
+          <PeriodBtn d={30} label="30 DIAS" />
+          <button onClick={fetchData} className="ml-2 p-2 rounded-lg"
+            style={{ background: "rgba(255,255,255,0.05)", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}>
+            {Icons.refresh}
+          </button>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center" style={{ height: 300 }}>
+          <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "16px", color: "rgba(255,255,255,0.3)", letterSpacing: "3px", animation: "pulse 1.5s ease-in-out infinite" }}>
+            CARREGANDO...
+          </div>
+        </div>
+      ) : data ? (
+        <>
+          {/* Top Stats */}
+          <div className="grid grid-cols-2 gap-4 mb-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+            <StatCard label="CONVERSAS" value={data.totalConvos} sub={`Últimos ${period} dia${period > 1 ? "s" : ""}`} color="#FF4C3B" icon={Icons.chat} delay={0} />
+            <StatCard label="CONTATOS" value={data.totalContacts} sub="Total cadastrados" color="#25D366" icon={Icons.contact} delay={100} />
+            <StatCard label="MENSAGENS" value={data.totalMsgsIn} sub={`Últimos ${period} dia${period > 1 ? "s" : ""}`} color="#3B82F6" icon={Icons.message} delay={200} />
+            <StatCard label="TAXA TRANSBORDO" value={`${data.transferRate}%`} sub="Transferidas p/ humano" color="#F59E0B" icon={Icons.funnel} delay={300} />
+          </div>
+
+          {/* Two columns */}
+          <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1fr" }}>
+            {/* Status das Conversas */}
+            <div className="rounded-2xl p-6" style={{ background: "rgba(25,25,25,0.8)", border: "1px solid rgba(255,76,59,0.08)" }}>
+              <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "14px", fontWeight: 600, letterSpacing: "2px", color: "#FF4C3B", marginBottom: "20px" }}>
+                STATUS DAS CONVERSAS
+              </h3>
+              <div className="flex flex-col gap-3">
+                <SimpleBar label="ABERTAS" value={data.totalOpen} max={data.convosAll} color="#3B82F6" />
+                <SimpleBar label="RESOLVIDAS" value={data.totalResolved} max={data.convosAll} color="#22C55E" />
+                <SimpleBar label="PENDENTES" value={data.totalPending} max={data.convosAll} color="#F59E0B" />
+              </div>
+            </div>
+
+            {/* IA vs Humano */}
+            <div className="rounded-2xl p-6" style={{ background: "rgba(25,25,25,0.8)", border: "1px solid rgba(255,76,59,0.08)" }}>
+              <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "14px", fontWeight: 600, letterSpacing: "2px", color: "#FF4C3B", marginBottom: "20px" }}>
+                IA vs HUMANO
+              </h3>
+              <div className="flex flex-col gap-3">
+                <SimpleBar label="IA RESOLVEU" value={data.botHandled} max={data.convosAll} color="#22C55E" />
+                <SimpleBar label="HUMANO" value={data.humanHandled} max={data.convosAll} color="#F59E0B" />
+              </div>
+              <div className="mt-6 flex items-center gap-4">
+                <div className="flex-1 rounded-xl p-4 text-center" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
+                  <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "28px", fontWeight: 700, color: "#22C55E" }}>
+                    {data.convosAll > 0 ? Math.round((data.botHandled / data.convosAll) * 100) : 0}%
+                  </div>
+                  <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "10px", letterSpacing: "1px", color: "rgba(255,255,255,0.4)" }}>AUTOMAÇÃO</div>
+                </div>
+                <div className="flex-1 rounded-xl p-4 text-center" style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)" }}>
+                  <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "28px", fontWeight: 700, color: "#F59E0B" }}>
+                    {data.transferRate}%
+                  </div>
+                  <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "10px", letterSpacing: "1px", color: "rgba(255,255,255,0.4)" }}>TRANSBORDO</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Últimas conversas */}
+          <div className="rounded-2xl p-6 mt-6" style={{ background: "rgba(25,25,25,0.8)", border: "1px solid rgba(255,76,59,0.08)" }}>
+            <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "14px", fontWeight: 600, letterSpacing: "2px", color: "#FF4C3B", marginBottom: "16px" }}>
+              ÚLTIMAS CONVERSAS
+            </h3>
+            <div className="flex flex-col gap-2">
+              {data.recentConvos.slice(0, 8).map((c, i) => (
+                <div key={c.id || i} className="flex items-center justify-between py-3 px-4 rounded-xl"
+                  style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.03)" }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ background: "rgba(255,76,59,0.15)", fontFamily: "'Oswald', sans-serif", fontSize: "11px", color: "#FF4C3B", fontWeight: 600 }}>
+                      {(c.meta?.sender?.name || "?").charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#fff", fontWeight: 500 }}>
+                        {c.meta?.sender?.name || `Conversa #${c.id}`}
+                      </div>
+                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>
+                        {c.last_non_activity_message?.content?.substring(0, 50) || "Sem mensagens"}
+                        {c.last_non_activity_message?.content?.length > 50 ? "..." : ""}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span style={{
+                      fontFamily: "'Oswald', sans-serif", fontSize: "10px", letterSpacing: "1px", padding: "3px 10px",
+                      borderRadius: "6px",
+                      background: c.status === "resolved" ? "rgba(34,197,94,0.15)" : c.status === "open" ? "rgba(59,130,246,0.15)" : "rgba(245,158,11,0.15)",
+                      color: c.status === "resolved" ? "#22C55E" : c.status === "open" ? "#3B82F6" : "#F59E0B",
+                    }}>
+                      {c.status === "resolved" ? "RESOLVIDA" : c.status === "open" ? "ABERTA" : "PENDENTE"}
+                    </span>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>
+                      {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {data.recentConvos.length === 0 && (
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.3)", textAlign: "center", padding: "20px" }}>
+                  Nenhuma conversa no período
+                </p>
+              )}
+            </div>
+          </div>
+        </>
+      ) : (
+        <p style={{ color: "rgba(255,255,255,0.3)" }}>Erro ao carregar dados</p>
+      )}
+    </div>
+  );
+}
+
+// ============== HOME/MENU PAGE ==============
 function DashboardPage() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      const convos = await cwFetch(`/conversations?page=1&status=all`);
+      const contacts = await cwFetch(`/contacts?page=1`);
+      let allConvos = [];
+      if (convos && convos.data && convos.data.payload) allConvos = convos.data.payload;
+      else if (convos && convos.payload) allConvos = convos.payload;
+      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+      const recent = allConvos.filter(c => new Date(c.created_at) >= cutoff);
+      let totalContacts = contacts && contacts.payload ? contacts.payload.length : 0;
+      let msgs = 0;
+      recent.forEach(c => { msgs += c.messages_count || 0; });
+      setData({ convos: recent.length, contacts: totalContacts, msgs });
+    })();
+  }, []);
+
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 style={{
-          fontFamily: "'Oswald', sans-serif",
-          fontSize: "32px",
-          fontWeight: 700,
-          color: "#fff",
-          letterSpacing: "2px",
-        }}>
-          MENU INICIAL
-        </h1>
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: "14px",
-          color: "rgba(255,255,255,0.4)",
-          marginTop: "4px",
-        }}>
-          Visão geral dos últimos 7 dias
-        </p>
+        <h1 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "32px", fontWeight: 700, color: "#fff", letterSpacing: "2px" }}>MENU INICIAL</h1>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>Visão geral dos últimos 7 dias</p>
       </div>
-
       <div className="flex flex-col gap-5 max-w-2xl">
-        <MetricCard
-          icon={Icons.contact}
-          title="CONTATOS - ÚLTIMOS 7 DIAS"
-          whatsapp="120"
-          instagram="500"
-          delay={100}
-        />
-        <MetricCard
-          icon={Icons.chat}
-          title="CONVERSAS - ÚLTIMOS 7 DIAS"
-          whatsapp="98"
-          instagram="112"
-          delay={200}
-        />
-        <MetricCard
-          icon={Icons.message}
-          title="MENSAGENS - ÚLTIMOS 7 DIAS"
-          whatsapp="98"
-          instagram="38"
-          delay={300}
-        />
+        <div className="rounded-2xl p-6 flex items-center gap-6" style={{ background: "linear-gradient(135deg, rgba(30,30,30,0.8), rgba(20,20,20,0.6))", border: "1px solid rgba(255,76,59,0.1)", animation: "slideUp 0.6s ease-out 100ms both" }}>
+          <div style={{ color: "rgba(255,255,255,0.8)" }}>{Icons.contact}</div>
+          <div>
+            <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "16px", fontWeight: 600, letterSpacing: "2px", color: "#FF4C3B", marginBottom: "4px" }}>CONTATOS</h3>
+            <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "24px", fontWeight: 700, color: "#fff" }}>{data ? data.contacts : "..."}</span>
+          </div>
+        </div>
+        <div className="rounded-2xl p-6 flex items-center gap-6" style={{ background: "linear-gradient(135deg, rgba(30,30,30,0.8), rgba(20,20,20,0.6))", border: "1px solid rgba(255,76,59,0.1)", animation: "slideUp 0.6s ease-out 200ms both" }}>
+          <div style={{ color: "rgba(255,255,255,0.8)" }}>{Icons.chat}</div>
+          <div>
+            <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "16px", fontWeight: 600, letterSpacing: "2px", color: "#FF4C3B", marginBottom: "4px" }}>CONVERSAS - 7 DIAS</h3>
+            <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "24px", fontWeight: 700, color: "#fff" }}>{data ? data.convos : "..."}</span>
+          </div>
+        </div>
+        <div className="rounded-2xl p-6 flex items-center gap-6" style={{ background: "linear-gradient(135deg, rgba(30,30,30,0.8), rgba(20,20,20,0.6))", border: "1px solid rgba(255,76,59,0.1)", animation: "slideUp 0.6s ease-out 300ms both" }}>
+          <div style={{ color: "rgba(255,255,255,0.8)" }}>{Icons.message}</div>
+          <div>
+            <h3 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "16px", fontWeight: 600, letterSpacing: "2px", color: "#FF4C3B", marginBottom: "4px" }}>MENSAGENS - 7 DIAS</h3>
+            <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: "24px", fontWeight: 700, color: "#fff" }}>{data ? data.msgs : "..."}</span>
+          </div>
+        </div>
       </div>
-
     </div>
   );
 }
@@ -522,43 +608,16 @@ function WhatsAppPage() {
     </div>
   );
 }
+
 // ============== PLACEHOLDER PAGES ==============
 function PlaceholderPage({ title, subtitle }) {
   return (
     <div className="p-8">
-      <h1 style={{
-        fontFamily: "'Oswald', sans-serif",
-        fontSize: "32px",
-        fontWeight: 700,
-        color: "#fff",
-        letterSpacing: "2px",
-      }}>
-        {title}
-      </h1>
-      <p style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: "14px",
-        color: "rgba(255,255,255,0.4)",
-        marginTop: "4px",
-      }}>
-        {subtitle}
-      </p>
-      <div
-        className="mt-8 rounded-2xl p-12 flex items-center justify-center"
-        style={{
-          background: "rgba(30,30,30,0.5)",
-          border: "1px solid rgba(255,76,59,0.1)",
-          minHeight: "300px",
-        }}
-      >
-        <p style={{
-          fontFamily: "'Oswald', sans-serif",
-          fontSize: "18px",
-          color: "rgba(255,255,255,0.2)",
-          letterSpacing: "3px",
-        }}>
-          EM BREVE
-        </p>
+      <h1 style={{ fontFamily: "'Oswald', sans-serif", fontSize: "32px", fontWeight: 700, color: "#fff", letterSpacing: "2px" }}>{title}</h1>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>{subtitle}</p>
+      <div className="mt-8 rounded-2xl p-12 flex items-center justify-center"
+        style={{ background: "rgba(30,30,30,0.5)", border: "1px solid rgba(255,76,59,0.1)", minHeight: "300px" }}>
+        <p style={{ fontFamily: "'Oswald', sans-serif", fontSize: "18px", color: "rgba(255,255,255,0.2)", letterSpacing: "3px" }}>EM BREVE</p>
       </div>
     </div>
   );
@@ -569,101 +628,43 @@ export default function DacoHub() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentPage, setCurrentPage] = useState("home");
 
-  if (!isLoggedIn) {
-    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
-  }
+  if (!isLoggedIn) return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
 
   const renderPage = () => {
     switch (currentPage) {
-      case "home":
-        return <DashboardPage />;
-      case "whatsapp":
-        return <WhatsAppPage />;
-      case "instagram":
-        return <PlaceholderPage title="INSTAGRAM" subtitle="Direct messages em tempo real" />;
-      case "dashboard":
-        return <PlaceholderPage title="DASHBOARD IA" subtitle="Métricas e monitoramento dos agentes" />;
-      case "funnel":
-        return <PlaceholderPage title="FUNIL" subtitle="Pipeline de vendas e leads" />;
-      case "calendar":
-        return <PlaceholderPage title="AGENDA" subtitle="Agendamentos e compromissos" />;
-      case "clients":
-        return <PlaceholderPage title="CLIENTES" subtitle="Gestão de contatos e leads" />;
-      case "store":
-        return <PlaceholderPage title="PONTO DE VENDA" subtitle="Vendas e transações" />;
-      case "products":
-        return <PlaceholderPage title="PRODUTOS E SERVIÇOS" subtitle="Cadastro e gerenciamento" />;
-      case "settings":
-        return <PlaceholderPage title="CONFIGURAÇÕES" subtitle="Personalização e integrações" />;
-      default:
-        return <DashboardPage />;
+      case "home": return <DashboardPage />;
+      case "whatsapp": return <WhatsAppPage />;
+      case "instagram": return <PlaceholderPage title="INSTAGRAM" subtitle="Direct messages em tempo real" />;
+      case "dashboard": return <DashboardIAPage />;
+      case "funnel": return <PlaceholderPage title="FUNIL" subtitle="Pipeline de vendas e leads" />;
+      case "calendar": return <PlaceholderPage title="AGENDA" subtitle="Agendamentos e compromissos" />;
+      case "clients": return <PlaceholderPage title="CLIENTES" subtitle="Gestão de contatos e leads" />;
+      case "store": return <PlaceholderPage title="PONTO DE VENDA" subtitle="Vendas e transações" />;
+      case "products": return <PlaceholderPage title="PRODUTOS E SERVIÇOS" subtitle="Cadastro e gerenciamento" />;
+      case "settings": return <PlaceholderPage title="CONFIGURAÇÕES" subtitle="Personalização e integrações" />;
+      default: return <DashboardPage />;
     }
   };
 
   return (
     <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
       <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
-
-      {/* Top Bar */}
-      <div
-        className="fixed top-0 right-0 h-16 flex items-center justify-end px-8 z-40"
-        style={{
-          left: "96px",
-          background: "rgba(10,10,10,0.9)",
-          backdropFilter: "blur(10px)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
+      <div className="fixed top-0 right-0 h-16 flex items-center justify-end px-8 z-40"
+        style={{ left: "96px", background: "rgba(10,10,10,0.9)", backdropFilter: "blur(10px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#fff",
-            }}>
-              Daco Digital
-            </p>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "11px",
-              color: "rgba(255,255,255,0.4)",
-            }}>
-              Administrador
-            </p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "#fff" }}>Daco Digital</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>Administrador</p>
           </div>
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{
-              background: "linear-gradient(135deg, #FF4C3B, #FF6B5A)",
-              fontFamily: "'Oswald', sans-serif",
-              fontWeight: 700,
-              color: "#fff",
-              fontSize: "14px",
-            }}
-          >
-            DD
-          </div>
-          <button
-            onClick={() => setIsLoggedIn(false)}
-            className="ml-2 p-2 rounded-lg transition-all duration-300"
-            style={{
-              color: "rgba(255,255,255,0.3)",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-            }}
-            title="Sair"
-          >
+          <div className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #FF4C3B, #FF6B5A)", fontFamily: "'Oswald', sans-serif", fontWeight: 700, color: "#fff", fontSize: "14px" }}>DD</div>
+          <button onClick={() => setIsLoggedIn(false)} className="ml-2 p-2 rounded-lg transition-all duration-300"
+            style={{ color: "rgba(255,255,255,0.3)", background: "transparent", border: "none", cursor: "pointer" }} title="Sair">
             {Icons.logout}
           </button>
         </div>
       </div>
-
-      {/* Main Content */}
-      <div style={{ marginLeft: "96px", paddingTop: "64px" }}>
-        {renderPage()}
-      </div>
+      <div style={{ marginLeft: "96px", paddingTop: "64px" }}>{renderPage()}</div>
     </div>
   );
 }
