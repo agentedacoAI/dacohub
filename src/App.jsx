@@ -497,55 +497,27 @@ function DashboardPage() {
 // ============== WHATSAPP PAGE ==============
 function WhatsAppPage() {
   return (
-    <div className="p-8 h-full">
-      <div className="mb-6">
-        <h1 style={{
-          fontFamily: "'Oswald', sans-serif",
-          fontSize: "32px",
-          fontWeight: 700,
-          color: "#fff",
-          letterSpacing: "2px",
-        }}>
-          WHATSAPP
-        </h1>
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: "14px",
-          color: "rgba(255,255,255,0.4)",
-          marginTop: "4px",
-        }}>
-          Conversas em tempo real
-        </p>
-      </div>
-      <div
-        className="overflow-hidden"
-        style={{
-          height: "calc(100vh - 140px)",
-          position: "relative",
-        }}
-      >
-        <div style={{
-          position: "absolute",
-          top: 0,
-          left: "-56px",
-          width: "calc(100% + 56px)",
-          height: "100%",
-        }}>
-          <iframe
-            src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
-            style={{
-              border: "none",
-              width: "100%",
-              height: "100%",
-            }}
-            title="WhatsApp"
-          />
-        </div>
+    <div style={{ height: "calc(100vh - 64px)", overflow: "hidden", position: "relative" }}>
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: "-56px",
+        width: "calc(100% + 56px)",
+        height: "100%",
+      }}>
+        <iframe
+          src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
+          style={{
+            border: "none",
+            width: "100%",
+            height: "100%",
+          }}
+          title="WhatsApp"
+        />
       </div>
     </div>
   );
 }
-
 // ============== PLACEHOLDER PAGES ==============
 function PlaceholderPage({ title, subtitle }) {
   return (
