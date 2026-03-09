@@ -498,16 +498,22 @@ function DashboardPage() {
 function WhatsAppPage() {
   return (
     <div style={{
-      height: "calc(100vh - 64px)",
+      position: "fixed",
+      top: "64px",
+      left: "96px",
+      right: 0,
+      bottom: 0,
       overflow: "hidden",
     }}>
       <iframe
         src="https://chat.agentedaco.com.br/app/accounts/1/conversations?inbox[]=2"
         style={{
           border: "none",
-          width: "calc(100% + 300px)",
+          position: "absolute",
+          top: 0,
+          left: "-250px",
+          width: "calc(100% + 250px)",
           height: "100%",
-          marginLeft: "-300px",
         }}
         title="WhatsApp"
       />
